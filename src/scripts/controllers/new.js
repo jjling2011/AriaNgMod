@@ -35,14 +35,24 @@
         };
 
         var downloadByTorrent = function (pauseOnAdded, responseCallback) {
-            var task = {
-                content: $scope.context.uploadFile.base64Content,
-                options: angular.copy($scope.context.options)
+
+            var options = angular.copy($scope.context.options);
+            saveDownloadPath(options);
+
+            var num = $scope.context.uploadFile.length;
+            var blackHole = function () { };
+
+            for (var i = 0; i < num; i++) {
+                var task = {
+                    content: $scope.context.uploadFile[i].base64Content,
+                    options: options
+                };
+                if (i < num - 1) {
+                    $rootScope.loadPromise = aria2TaskService.newTorrentTask(task, pauseOnAdded, blackHole);
+                } else {
+                    return aria2TaskService.newTorrentTask(task, pauseOnAdded, responseCallback);
+                }
             };
-
-            saveDownloadPath(task.options);
-
-            return aria2TaskService.newTorrentTask(task, pauseOnAdded, responseCallback);
         };
 
         var downloadByMetalink = function (pauseOnAdded, responseCallback) {
@@ -133,12 +143,37 @@
                 fileFilter: '.torrent',
                 fileType: 'binary'
             }, function (result) {
-                $scope.context.uploadFile = result;
+                $scope.context.uploadFile = [result];
                 $scope.context.taskType = 'torrent';
                 $scope.changeTab('options');
             }, function (error) {
                 ariaNgLocalizationService.showError(error);
             }, angular.element('#file-holder'));
+        };
+
+        $scope.openTorrents = function () {
+
+            var torrentFiles = [];
+
+            ariaNgFileService.openMultipleFileContents({
+                scope: $scope,
+                fileFilter: '.torrent',
+                fileType: 'binary'
+            }, function (result, readNextFile) {
+
+                torrentFiles.push(result);
+
+                if (readNextFile) {
+                    readNextFile();
+                } else {
+                    // read file finished
+                    $scope.context.taskType = 'torrent';
+                    $scope.context.uploadFile = torrentFiles;
+                    $scope.changeTab('options');
+                }
+            }, function (error) {
+                ariaNgLocalizationService.showError(error);
+            }, angular.element('#multiple-files-holder'));
         };
 
         $scope.openMetalink = function () {
@@ -210,6 +245,6 @@
             return urls ? urls.length : 0;
         };
 
-        $rootScope.loadPromise = $timeout(function () {}, 100);
+        $rootScope.loadPromise = $timeout(function () { }, 100);
     }]);
 }());
