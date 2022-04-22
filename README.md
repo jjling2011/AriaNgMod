@@ -2,7 +2,10 @@
 [![License](https://img.shields.io/github/license/jjling2011/AriaNgMod.svg?style=flat)](https://github.com/jjling2011/AriaNgMod/blob/master/LICENSE)
 
 ## Introduction
-AriaNgMod是[AriaNg](https://github.com/mayswind/AriaNg) v1.2.3的修改版。主要添加批量导入BT种子功能。
+AriaNgMod是[AriaNg](https://github.com/mayswind/AriaNg) v1.2.3的修改版。增加了批量导入BT种子功能。
+
+#### Online demo
+Demo: [https://jjling2011.github.io/AriaNgMod/](https://jjling2011.github.io/AriaNgMod/)
 
 #### Prebuilt release
 Latest Release: [https://github.com/jjling2011/AriaNgMod/releases](https://github.com/jjling2011/AriaNgMod/releases)
