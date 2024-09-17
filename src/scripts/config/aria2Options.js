@@ -1,7 +1,7 @@
 (function () {
     'use strict';
     angular.module('ariaNg').constant('aria2AllOptions', {
-        // Aria2 Option Defination EXAMPLE:
+        // Aria2 Option Definition EXAMPLE:
         // 'option key': {
         //     [since: '',] //This option is supported by this or higher aria2 version
         //     type: 'string|integer|float|text|boolean|option',
@@ -9,12 +9,14 @@
         //     [readonly: true|false,] //default: false
         //     [defaultValue: '',]
         //     [required: true|false,] //default: false
-        //     [split: '',] //SUPPORT 'text' type
-        //     [submitFormat: 'string|array'] //default: string, parameter 'split' is required
-        //     [showCount: true|false,] //SUPPORT 'text' type, parameter 'split' is required, default: false
+        //     [separator: '',] //SUPPORT 'text' type
+        //     [overrideMode: 'override|append',] //default: override
+        //     [submitFormat: 'string|array',] //default: string, parameter 'separator' is required
+        //     [showCount: true|false,] //SUPPORT 'text' type, parameter 'separator' is required, default: false
+        //     [trimCount: true|false,] //SUPPORT 'text' type, parameter 'separator', 'showCount' is required, default: false
         //     [options: [],] //SUPPORT 'option' type
-        //     [min: 0,] //SUPPORT 'integer', 'float'
-        //     [max: 0,] //SUPPORT 'integer', 'float'
+        //     [min: 0,] //SUPPORT 'integer', 'float' type
+        //     [max: 0,] //SUPPORT 'integer', 'float' type
         //     [pattern: '']
         // }
         'gid': {
@@ -53,6 +55,11 @@
         },
         'all-proxy-passwd': {
             type: 'string'
+        },
+        'checksum': {
+            type: 'string',
+            required: true,
+            pattern: '^(md5|sha-(1|224|256|384|512))=[a-zA-Z0-9]+$'
         },
         'connect-timeout': {
             type: 'integer',
@@ -111,7 +118,7 @@
         },
         'no-proxy': {
             type: 'text',
-            split: ',',
+            separator: ',',
             showCount: true
         },
         'out': {
@@ -235,9 +242,11 @@
         },
         'header': {
             type: 'text',
-            split: '\n',
+            separator: '\n',
+            overrideMode: 'append',
             submitFormat: 'array',
-            showCount: true
+            showCount: true,
+            trimCount: true
         },
         'save-cookies': {
             type: 'string'
@@ -309,7 +318,7 @@
         },
         'bt-exclude-tracker': {
             type: 'text',
-            split: ',',
+            separator: ',',
             showCount: true
         },
         'bt-external-ip': {
@@ -393,7 +402,7 @@
         },
         'bt-tracker': {
             type: 'text',
-            split: ',',
+            separator: ',',
             showCount: true
         },
         'bt-tracker-connect-timeout': {
@@ -835,7 +844,7 @@
             defaultValue: 'true'
         }
     }).constant('aria2GlobalAvailableOptions', {
-        // Aria2 Setting Page Defination EXAMPLE:
+        // Aria2 Setting Page Definition EXAMPLE:
         // 'category key': [
         //     'option key 1', 'option key 2', // more options if possible
         // ]
@@ -892,7 +901,7 @@
             'max-overall-download-limit', 'max-overall-upload-limit'
         ]
     }).constant('aria2TaskAvailableOptions', {
-        // Aria2 Task Option Defination EXAMPLE:
+        // Aria2 Task Option Definition EXAMPLE:
         // {
         //     key: 'option key',
         //     category: 'global|http|bittorrent',
@@ -976,6 +985,10 @@
                 canUpdate: 'new|waiting|paused'
             },
             {
+                key: 'checksum',
+                category: 'http'
+            },
+            {
                 key: 'referer',
                 category: 'http',
                 canUpdate: 'new'
@@ -1021,6 +1034,10 @@
                 key: 'conditional-get',
                 category: 'global',
                 canShow: 'new'
+            },
+            {
+                key: 'check-integrity',
+                category: 'global'
             },
             {
                 key: 'file-allocation',

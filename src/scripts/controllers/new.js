@@ -1,9 +1,39 @@
 (function () {
     'use strict';
 
-    angular.module('ariaNg').controller('NewTaskController', ['$rootScope', '$scope', '$location', '$timeout', 'ariaNgCommonService', 'ariaNgLocalizationService', 'ariaNgLogService', 'ariaNgFileService', 'ariaNgSettingService', 'aria2TaskService', 'aria2SettingService', function ($rootScope, $scope, $location, $timeout, ariaNgCommonService, ariaNgLocalizationService, ariaNgLogService, ariaNgFileService, ariaNgSettingService, aria2TaskService, aria2SettingService) {
-        var tabOrders = ['links', 'options'];
+    angular.module('ariaNg').controller('NewTaskController', ['$rootScope', '$scope', '$location', '$timeout', 'ariaNgCommonService', 'ariaNgLogService', 'ariaNgKeyboardService', 'ariaNgFileService', 'ariaNgSettingService', 'aria2TaskService', 'aria2SettingService', function ($rootScope, $scope, $location, $timeout, ariaNgCommonService, ariaNgLogService, ariaNgKeyboardService, ariaNgFileService, ariaNgSettingService, aria2TaskService, aria2SettingService) {
+        var tabStatusItems = [
+            {
+                name: 'links',
+                show: true
+            },
+            {
+                name: 'options',
+                show: true
+            }
+        ];
         var parameters = $location.search();
+
+        var getVisibleTabOrders = function () {
+            var items = [];
+
+            for (var i = 0; i < tabStatusItems.length; i++) {
+                if (tabStatusItems[i].show) {
+                    items.push(tabStatusItems[i].name);
+                }
+            }
+
+            return items;
+        };
+
+        var setTabItemShow = function (name, status) {
+            for (var i = 0; i < tabStatusItems.length; i++) {
+                if (tabStatusItems[i].name === name) {
+                    tabStatusItems[i].show = status;
+                    break;
+                }
+            }
+        };
 
         var saveDownloadPath = function (options) {
             if (!options || !options.dir) {
@@ -13,10 +43,13 @@
             aria2SettingService.addSettingHistory('dir', options.dir);
         };
 
-        var downloadByLinks = function (pauseOnAdded, responseCallback) {
+        var getDownloadTasksByLinks = function (options) {
             var urls = ariaNgCommonService.parseUrlsFromOriginInput($scope.context.urls);
-            var options = angular.copy($scope.context.options);
             var tasks = [];
+
+            if (!options) {
+                options = angular.copy($scope.context.options);
+            }
 
             for (var i = 0; i < urls.length; i++) {
                 if (urls[i] === '' || urls[i].trim() === '') {
@@ -28,6 +61,13 @@
                     options: options
                 });
             }
+
+            return tasks;
+        };
+
+        var downloadByLinks = function (pauseOnAdded, responseCallback) {
+            var options = angular.copy($scope.context.options);
+            var tasks = getDownloadTasksByLinks(options);
 
             saveDownloadPath(options);
 
@@ -84,7 +124,8 @@
                 global: true,
                 http: false,
                 bittorrent: false
-            }
+            },
+            exportCommandApiOptions: null
         };
 
         if (parameters.url) {
@@ -104,10 +145,11 @@
         };
 
         $rootScope.swipeActions.extendLeftSwipe = function () {
-            var tabIndex = tabOrders.indexOf($scope.context.currentTab);
+            var tabItems = getVisibleTabOrders();
+            var tabIndex = tabItems.indexOf($scope.context.currentTab);
 
-            if (tabIndex < tabOrders.length - 1) {
-                $scope.changeTab(tabOrders[tabIndex + 1]);
+            if (tabIndex < tabItems.length - 1) {
+                $scope.changeTab(tabItems[tabIndex + 1]);
                 return true;
             } else {
                 return false;
@@ -115,10 +157,11 @@
         };
 
         $rootScope.swipeActions.extendRightSwipe = function () {
-            var tabIndex = tabOrders.indexOf($scope.context.currentTab);
+            var tabItems = getVisibleTabOrders();
+            var tabIndex = tabItems.indexOf($scope.context.currentTab);
 
             if (tabIndex > 0) {
-                $scope.changeTab(tabOrders[tabIndex - 1]);
+                $scope.changeTab(tabItems[tabIndex - 1]);
                 return true;
             } else {
                 return false;
@@ -147,7 +190,7 @@
                 $scope.context.taskType = 'torrent';
                 $scope.changeTab('options');
             }, function (error) {
-                ariaNgLocalizationService.showError(error);
+                ariaNgCommonService.showError(error);
             }, angular.element('#file-holder'));
         };
 
@@ -186,8 +229,16 @@
                 $scope.context.taskType = 'metalink';
                 $scope.changeTab('options');
             }, function (error) {
-                ariaNgLocalizationService.showError(error);
+                ariaNgCommonService.showError(error);
             }, angular.element('#file-holder'));
+        };
+
+        $scope.isNewTaskValid = function () {
+            if (!$scope.context.uploadFile) {
+                return $scope.newTaskForm.$valid;
+            }
+
+            return true;
         };
 
         $scope.startDownload = function (pauseOnAdded) {
@@ -224,8 +275,15 @@
             }
         };
 
+        $scope.showExportCommandAPIModal = function () {
+            $scope.context.exportCommandApiOptions = {
+                type: 'new-task',
+                data: getDownloadTasksByLinks()
+            };
+        };
+
         $scope.setOption = function (key, value, optionStatus) {
-            if (value !== '') {
+            if (value !== '' || !aria2SettingService.isOptionKeyRequired(key)) {
                 $scope.context.options[key] = value;
             } else {
                 delete $scope.context.options[key];
@@ -235,8 +293,18 @@
         };
 
         $scope.urlTextboxKeyDown = function (event) {
-            if (event.keyCode === 13 && event.ctrlKey && $scope.newTaskForm.$valid) {
+            if (!ariaNgSettingService.getKeyboardShortcuts()) {
+                return;
+            }
+
+            if (ariaNgKeyboardService.isCtrlEnterPressed(event) && $scope.newTaskForm.$valid) {
+                if (event.preventDefault) {
+                    event.preventDefault();
+                }
+
                 $scope.startDownload();
+
+                return false;
             }
         };
 

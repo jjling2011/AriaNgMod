@@ -12,29 +12,17 @@
             };
         })();
         var browserSupportStorage = browserFeatures.localStroage || browserFeatures.cookies;
-        var browserSupportAppCache = !!$window.applicationCache;
         var browserSupportMatchMedia = !!$window.matchMedia;
         var browserSupportDarkMode = browserSupportMatchMedia
             && $window.matchMedia('(prefers-color-scheme: dark)')
             && $window.matchMedia('(prefers-color-scheme: dark)').media !== 'not all'
             && angular.isFunction($window.matchMedia('(prefers-color-scheme: dark)').addEventListener);
 
-        var onAppCacheUpdatedCallbacks = [];
         var onFirstVisitCallbacks = [];
         var firstVisitCallbackFired = false;
         var sessionSettings = {
             debugMode: false
         };
-
-        if (browserSupportAppCache) {
-            var appCache = $window.applicationCache;
-            appCache.addEventListener('updateready', function (e) {
-                for (var i = 0; i < onAppCacheUpdatedCallbacks.length; i++) {
-                    var callback = onAppCacheUpdatedCallbacks[i];
-                    callback();
-                }
-            }, false);
-        }
 
         var fireFirstVisitEvent = function () {
             if (!browserSupportStorage) {
@@ -220,6 +208,7 @@
                 rpcInterface: setting.rpcInterface,
                 protocol: setting.protocol,
                 httpMethod: setting.httpMethod,
+                rpcRequestHeaders: setting.rpcRequestHeaders,
                 secret: setting.secret
             };
         };
@@ -236,9 +225,6 @@
         return {
             isBrowserSupportStorage: function () {
                 return browserSupportStorage;
-            },
-            isBrowserSupportApplicationCache: function () {
-                return browserSupportAppCache;
             },
             isBrowserSupportDarkMode: function () {
                 return browserSupportDarkMode;
@@ -380,6 +366,24 @@
             setBrowserNotification: function (value) {
                 setOption('browserNotification', value);
             },
+            getBrowserNotificationSound: function () {
+                return getOption('browserNotificationSound');
+            },
+            setBrowserNotificationSound: function (value) {
+                setOption('browserNotificationSound', value);
+            },
+            getBrowserNotificationFrequency: function () {
+                return getOption('browserNotificationFrequency');
+            },
+            setBrowserNotificationFrequency: function (value) {
+                setOption('browserNotificationFrequency', value);
+            },
+            getWebSocketReconnectInterval: function () {
+                return getOption('webSocketReconnectInterval');
+            },
+            setWebSocketReconnectInterval: function (value) {
+                setOption('webSocketReconnectInterval', value);
+            },
             getTitleRefreshInterval: function () {
                 return getOption('titleRefreshInterval');
             },
@@ -397,6 +401,12 @@
             },
             setDownloadTaskRefreshInterval: function (value) {
                 setOption('downloadTaskRefreshInterval', Math.max(parseInt(value), 0));
+            },
+            getKeyboardShortcuts: function () {
+                return getOption('keyboardShortcuts');
+            },
+            setKeyboardShortcuts: function (value) {
+                setOption('keyboardShortcuts', value);
             },
             getSwipeGesture: function () {
                 return getOption('swipeGesture');
@@ -472,6 +482,9 @@
             },
             getCurrentRpcHttpMethod: function () {
                 return getOption('httpMethod');
+            },
+            getCurrentRpcRequestHeaders: function () {
+                return getOption('rpcRequestHeaders');
             },
             isCurrentRpcUseWebSocket: function (protocol) {
                 if (!protocol) {
@@ -632,14 +645,38 @@
                     return false;
                 }
 
+                if (options.rpcRequestHeaders !== setting.rpcRequestHeaders) {
+                    return false;
+                }
+
                 if (options.secret !== setting.secret) {
                     return false;
                 }
 
                 return true;
             },
-            getDisplayOrder: function () {
-                var value = getOption('displayOrder');
+            getTaskListIndependentDisplayOrder: function () {
+                return getOption('taskListIndependentDisplayOrder');
+            },
+            setTaskListIndependentDisplayOrder: function (value) {
+                setOption('taskListIndependentDisplayOrder', value);
+            },
+            getTaskListDisplayOrderKey: function (taskListPageType) {
+                var optionKey = 'displayOrder';
+
+                if (this.getTaskListIndependentDisplayOrder()) {
+                    if (taskListPageType === 'waiting') {
+                        optionKey = 'waitingTaskListPageDisplayOrder';
+                    } else if (taskListPageType === 'stopped') {
+                        optionKey = 'stoppedTaskListPageDisplayOrder';
+                    }
+                }
+
+                return optionKey;
+            },
+            getDisplayOrder: function (taskListPageType) {
+                var optionKey = this.getTaskListDisplayOrderKey(taskListPageType);
+                var value = getOption(optionKey);
 
                 if (!value) {
                     value = 'default:asc';
@@ -647,8 +684,9 @@
 
                 return value;
             },
-            setDisplayOrder: function (value) {
-                setOption('displayOrder', value);
+            setDisplayOrder: function (value, taskListPageType) {
+                var optionKey = this.getTaskListDisplayOrderKey(taskListPageType);
+                setOption(optionKey, value);
             },
             getFileListDisplayOrder: function () {
                 var value = getOption('fileListDisplayOrder');
@@ -676,13 +714,6 @@
             },
             resetSettings: function () {
                 clearAll();
-            },
-            onApplicationCacheUpdated: function (callback) {
-                if (!callback) {
-                    return;
-                }
-
-                onAppCacheUpdatedCallbacks.push(callback);
             },
             onFirstAccess: function (callback) {
                 if (!callback) {

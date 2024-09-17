@@ -75,7 +75,7 @@
         };
 
         $scope.getOrderType = function () {
-            return ariaNgSettingService.getDisplayOrder();
+            return ariaNgSettingService.getDisplayOrder(location);
         };
 
         $scope.isSupportDragTask = function () {
@@ -83,7 +83,7 @@
                 return false;
             }
 
-            var displayOrder = ariaNgCommonService.parseOrderType(ariaNgSettingService.getDisplayOrder());
+            var displayOrder = ariaNgCommonService.parseOrderType(ariaNgSettingService.getDisplayOrder(location));
 
             return location === 'waiting' && displayOrder.type === 'default';
         };
@@ -120,6 +120,30 @@
                 $interval.cancel(downloadTaskRefreshPromise);
             }
         });
+
+        $rootScope.keydownActions.selectAll = function (event) {
+            if (event.preventDefault) {
+                event.preventDefault();
+            }
+
+            $scope.$apply(function () {
+                $scope.selectAllTasks();
+            });
+
+            return false;
+        };
+
+        $rootScope.keydownActions.delete = function (event) {
+            if (event.preventDefault) {
+                event.preventDefault();
+            }
+
+            $scope.$apply(function () {
+                $scope.removeTasks();
+            });
+
+            return false;
+        }
 
         $rootScope.loadPromise = refreshDownloadTask(false);
     }]);

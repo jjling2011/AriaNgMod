@@ -1,9 +1,10 @@
 (function () {
     'use strict';
 
-    angular.module('ariaNg').factory('aria2HttpRpcService', ['$http', 'ariaNgCommonService', 'ariaNgSettingService', 'ariaNgLogService', function ($http, ariaNgCommonService, ariaNgSettingService, ariaNgLogService) {
+    angular.module('ariaNg').factory('aria2HttpRpcService', ['$http', 'ariaNgConstants', 'ariaNgCommonService', 'ariaNgSettingService', 'ariaNgLogService', function ($http, ariaNgConstants, ariaNgCommonService, ariaNgSettingService, ariaNgLogService) {
         var rpcUrl = ariaNgSettingService.getCurrentRpcUrl();
         var method = ariaNgSettingService.getCurrentRpcHttpMethod();
+        var requestHeaders = ariaNgSettingService.getCurrentRpcRequestHeaders();
 
         var getUrlWithQueryString = function (url, parameters) {
             if (!url || url.length < 1) {
@@ -57,13 +58,33 @@
 
                 var requestContext = {
                     url: rpcUrl,
-                    method: method
+                    method: method,
+                    headers: {},
+                    timeout: ariaNgConstants.httpRequestTimeout
                 };
 
                 if (requestContext.method === 'POST') {
-                    requestContext.data = context.requestBody;
+                    requestContext.data = angular.toJson(context.requestBody);
+                    requestContext.headers['Content-Type'] = 'application/json';
                 } else if (requestContext.method === 'GET') {
                     requestContext.url = getUrlWithQueryString(requestContext.url, context.requestBody);
+                }
+
+                if (requestHeaders) {
+                    var lines = requestHeaders.split('\n');
+
+                    for (var i = 0; i < lines.length; i++) {
+                        var items = lines[i].split(':');
+
+                        if (items.length !== 2) {
+                            continue;
+                        }
+
+                        var name = items[0].trim();
+                        var value = items[1].trim();
+
+                        requestContext.headers[name] = value;
+                    }
                 }
 
                 ariaNgLogService.debug('[aria2HttpRpcService.request] ' + (context && context.requestBody && context.requestBody.method ? context.requestBody.method + ' ' : '') + 'request start', requestContext);
@@ -96,9 +117,7 @@
                         data = {
                             id: '-1',
                             error: {
-                                // code: '-1',
-                                // message: 'Unknown Error',
-                                innerError: true
+                                message: 'Cannot connect to aria2!'
                             }
                         };
 
@@ -114,6 +133,9 @@
                         context.errorCallback(data.id, data.error);
                     }
                 });
+            },
+            reconnect: function () {
+                //Not implement
             },
             on: function (eventName, callback) {
                 //Not implement

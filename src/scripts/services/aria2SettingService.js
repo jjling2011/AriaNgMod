@@ -26,6 +26,11 @@
 
                 return !!option;
             },
+            isOptionKeyRequired: function (key) {
+                var option = aria2AllOptions[key];
+
+                return option && option.required;
+            },
             getAvailableGlobalOptionsKeys: function (type) {
                 if (type === 'basic') {
                     return aria2GlobalAvailableOptions.basicOptions;
@@ -258,6 +263,12 @@
                         callback(stat);
                     }
                 });
+            },
+            canReconnect: function () {
+                return aria2RpcService.canReconnect();
+            },
+            reconnect: function () {
+                return aria2RpcService.reconnect({});
             },
             saveSession: function (callback, silent) {
                 return aria2RpcService.saveSession({
