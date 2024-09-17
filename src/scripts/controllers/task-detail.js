@@ -77,6 +77,8 @@
             }
 
             $scope.context.showPiecesInfo = isShowPiecesInfo(task);
+            $scope.context.extensions = getExtensions(task);
+            $scope.context.isShowUncompleteOnly = false;
 
             setTabItemShow('pieces', $scope.context.showPiecesInfo);
             setTabItemShow('btpeers', task.status === 'active' && task.bittorrent);
@@ -155,6 +157,84 @@
                     processPeers(response.peers);
                 }, silent, requireBtPeers($scope.task), includeLocalPeer, addVirtualFileNode);
             }
+        };
+
+        var changeExtSelection = function (o) {
+
+            // console.log("check:", o);
+
+            if (!$scope.task || !$scope.task.files) {
+                return;
+            }
+
+            var gid = $scope.task.gid;
+            var selectedFileIndex = [];
+
+            for (var i = 0; i < $scope.task.files.length; i++) {
+                var file = $scope.task.files[i];
+                if (file && !file.isDir) {
+                    var selected = file.selected;
+                    var ext = ariaNgCommonService.getFileExtension(file.fileName).toLowerCase();
+                    if (o.tag == ext) {
+                        selected = o.checked ? true : false;
+                    }
+                    if (selected) {
+                        selectedFileIndex.push(file.index);
+                    }
+                }
+            }
+
+            pauseDownloadTaskRefresh = true;
+
+            return aria2TaskService.selectTaskFile(gid, selectedFileIndex, function (response) {
+                pauseDownloadTaskRefresh = false;
+
+                if (response.success) {
+                    refreshDownloadTask(false);
+                }
+            }, false);
+
+        };
+
+
+        var getExtensions = function (task) {
+            var exts = {};
+            if (!task || !task.files) {
+                return exts;
+            }
+
+            var files = task.files;
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                if (file.isDir) {
+                    continue;
+                }
+
+                var ext = ariaNgCommonService.getFileExtension(file.fileName).toLowerCase();
+                if (ext in exts) {
+                    var o = exts[ext];
+                    o.completed += file.completedLength;
+                    o.size += file.length;
+                    o.count += file.selected ? 1 : 0;
+                    o.total++;
+                } else {
+                    exts[ext] = {
+                        tag: ext,
+                        total: 1,
+                        count: file.selected ? 1 : 0,
+                        size: file.length,
+                        completed: file.completedLength,
+                    };
+                }
+            }
+
+            for (var key in exts) {
+                var o = exts[key];
+                o.checked = o.count > 0;
+            }
+
+            return exts;
         };
 
         var setSelectFiles = function (silent) {
@@ -596,6 +676,8 @@
         $('#custom-choose-file-modal').on('hide.bs.modal', function (e) {
             $scope.context.fileExtensions = null;
         });
+
+        $scope.changeExtSelection = changeExtSelection;
 
         $scope.setSelectedFile = function (updateNodeSelectedStatus) {
             if (updateNodeSelectedStatus) {

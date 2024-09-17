@@ -3,16 +3,6 @@
 
 ## Introduction
 AriaNgMod是[AriaNg](https://github.com/mayswind/AriaNg) v1.3.8的修改版。增加了批量导入BT种子功能。
-```bash
-# 安装依赖
-pnpm install
-
-# 编译项目
-pnpm run build
-
-# 测试项目
-pnpm run serve
-```
 
 #### Online demo
 Demo: [https://jjling2011.github.io/AriaNgMod/](https://jjling2011.github.io/AriaNgMod/)
