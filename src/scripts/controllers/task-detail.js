@@ -224,13 +224,46 @@
                 }
             };
 
-            var selectByExtension = function (extension, checked) {
+            const extensionLookupTable = (function () {
+                const t = {};
+                for (var type in ariaNgFileTypes) {
+                    if (!ariaNgFileTypes.hasOwnProperty(type)) {
+                        continue;
+                    }
+
+                    var o = ariaNgFileTypes[type];
+                    for (var ext of o.extensions) {
+                        t[ext] = o.name;
+                    }
+                }
+                return t;
+            })();
+
+            const nameToTypeLookupTable = (function () {
+                var t = {};
+                for (var type in ariaNgFileTypes) {
+                    if (!ariaNgFileTypes.hasOwnProperty(type)) {
+                        continue;
+                    }
+                    var name = ariaNgFileTypes[type].name;
+                    t[name] = type;
+                }
+                return t;
+            })();
+
+            var selectByExtension = function (name, checked) {
                 if (!$scope.task || !$scope.task.files) {
                     return;
                 }
 
                 var gid = $scope.task.gid;
                 var selectedFileIndex = [];
+                var exts = [name];
+
+                if (name in nameToTypeLookupTable) {
+                    var type = nameToTypeLookupTable[name];
+                    exts = ariaNgFileTypes[type].extensions;
+                }
 
                 for (var i = 0; i < $scope.task.files.length; i++) {
                     var file = $scope.task.files[i];
@@ -238,7 +271,7 @@
                         var selected = file.selected;
                         var name = (file.fileName || "").toLowerCase();
                         var ext = ariaNgCommonService.getFileExtension(name);
-                        if (extension == ext) {
+                        if (exts.indexOf(ext) >= 0) {
                             selected = checked ? true : false;
                         }
                         if (selected) {
@@ -279,6 +312,13 @@
 
                     var name = (file.fileName || "").toLowerCase();
                     var ext = ariaNgCommonService.getFileExtension(name);
+                    var pri = 1;
+
+                    if (ext in extensionLookupTable) {
+                        ext = extensionLookupTable[ext];
+                        pri = 2;
+                    }
+
                     if (ext in exts) {
                         var o = exts[ext];
                         o.completed += file.completedLength;
@@ -288,6 +328,7 @@
                     } else {
                         exts[ext] = {
                             tag: ext,
+                            pri: pri,
                             total: 1,
                             count: file.selected ? 1 : 0,
                             size: file.length,
@@ -296,12 +337,13 @@
                     }
                 }
 
+                var r = [];
                 for (var key in exts) {
                     var o = exts[key];
                     o.checked = o.count > 0;
+                    r.push(o);
                 }
-
-                return exts;
+                return r;
             };
 
             var setSelectFiles = function (silent) {
@@ -431,8 +473,12 @@
                 availableOptions: [],
                 options: [],
 
-                extensionInfos: {},
-                showUncompletedOnly: false,
+                extensionInfos: [],
+                fileFilter: "Show All",
+            };
+
+            $scope.setFileFilter = function (type) {
+                $scope.context.fileFilter = type;
             };
 
             $scope.changeTab = function (tabName) {
