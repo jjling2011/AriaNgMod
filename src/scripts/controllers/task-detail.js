@@ -316,7 +316,15 @@
 
                     if (ext in extensionLookupTable) {
                         ext = extensionLookupTable[ext];
-                        pri = 2;
+                        if (ext === "Videos") {
+                            pri = 16;
+                        } else if (ext === "Archives") {
+                            pri = 8;
+                        } else if (ext === "Pictures") {
+                            pri = 4;
+                        } else {
+                            pri = 2;
+                        }
                     }
 
                     if (ext in exts) {
