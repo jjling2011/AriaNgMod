@@ -21,6 +21,11 @@
     margin-left: -21px;
 }
 
+.margin-lr{
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+}
+
 .progress-bar {
     -webkit-transition: initial !important;
     -moz-transition: initial !important;

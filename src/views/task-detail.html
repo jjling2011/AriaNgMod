@@ -504,12 +504,9 @@
                     </div>
                     <div
                         class="task-table-title"
-                        ng-if="task && task.files && task.files.length > 0 && (task.status === 'waiting' || task.status === 'paused')"
+                        ng-if="task && task.files && task.files.length > 1 && (task.status === 'waiting' || task.status === 'paused')"
                     >
-                        <div
-                            class="btn-group"
-                            style="margin: 0rem 1rem;"
-                        >
+                        <div class="btn-group">
                             <button
                                 type="button"
                                 class="btn btn-primary btn-xs"
@@ -556,9 +553,37 @@
                                 </li>
                             </ul>
                         </div>
+                        <div class="btn-group margin-lr">
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-xs"
+                                translate
+                            >
+                                Select Group
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-xs dropdown-toggle"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                            >
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="g in context.extensionGroupNames | orderBy:'size':true">
+                                    <a
+                                        href="javascript:void(0);"
+                                        ng-click="selectExtensionGroup(g.name)"
+                                    >
+                                        {{ g.name | translate }} ({{ g.size | readableVolume }})
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                         <div
-                            class="checkbox checkbox-primary checkbox-inline"
-                            ng-repeat="info in context.extensionInfos | orderBy:'pri':true"
+                            class="checkbox checkbox-primary checkbox-inline margin-lr"
+                            ng-repeat="info in context.extensionInfos | orderBy:'size':true"
                         >
                             <input
                                 id="{{'ext_box_' + info.tag}}"
@@ -569,9 +594,9 @@
                             <label
                                 for="{{'ext_box_' + info.tag}}"
                                 class="allow-word-break"
-                                title="{{ 'Selected' | translate }}: {{ info.count }} {{ 'Completed' | translate }}: {{ info.completed | readableVolume }} {{ 'Size' | translate }}: {{ info.size | readableVolume }}"
+                                title="{{ 'Count' | translate }}: {{ info.total }} {{ 'Completed' | translate }}: {{ info.completed | readableVolume }}"
                             >
-                                {{ info.tag | translate }} ({{ info.total }})
+                                {{ info.tag | translate }} ({{ info.size | readableVolume }})
                             </label>
                         </div>
                     </div>
