@@ -107,10 +107,7 @@
                 }
 
                 $scope.context.showPiecesInfo = isShowPiecesInfo(task);
-
-                const extInfos = getExtensionInfos(task);
-                $scope.context.extensionInfos = extInfos.exts;
-                $scope.context.extensionGroupNames = extInfos.groups;
+                $scope.context.fileInfos = getFileInfos(task);
 
                 setTabItemShow("pieces", $scope.context.showPiecesInfo);
                 setTabItemShow(
@@ -272,6 +269,38 @@
                 );
             };
 
+            var selectInvert = function () {
+                if (!$scope.task || !$scope.task.files) {
+                    return;
+                }
+
+                var selectedFileIndex = [];
+                for (var i = 0; i < $scope.task.files.length; i++) {
+                    var file = $scope.task.files[i];
+                    if (file && !file.isDir && !file.selected) {
+                        selectedFileIndex.push(file.index);
+                    }
+                }
+
+                return refreshFileList(selectedFileIndex);
+            };
+
+            var selectAllFiles = function () {
+                if (!$scope.task || !$scope.task.files) {
+                    return;
+                }
+
+                var selectedFileIndex = [];
+                for (var i = 0; i < $scope.task.files.length; i++) {
+                    var file = $scope.task.files[i];
+                    if (file && !file.isDir) {
+                        selectedFileIndex.push(file.index);
+                    }
+                }
+
+                return refreshFileList(selectedFileIndex);
+            };
+
             var selectExtensionGroup = function (name) {
                 if (
                     !$scope.task ||
@@ -329,12 +358,14 @@
                 return refreshFileList(selectedFileIndex);
             };
 
-            var getExtensionInfos = function (task) {
+            var getFileInfos = function (task) {
                 var exts = {};
                 if (!task || !task.files) {
                     return exts;
                 }
 
+                var totalSize = 0;
+                var selectedSize = 0;
                 var files = task.files;
                 for (var i = 0; i < files.length; i++) {
                     var file = files[i];
@@ -350,18 +381,26 @@
                         ext = extensionLookupTable[ext];
                     }
 
+                    var size = file.length;
+                    totalSize += size;
+                    var d = 0;
+                    if (file.selected) {
+                        d = 1;
+                        selectedSize += size;
+                    }
+
                     if (ext in exts) {
                         var o = exts[ext];
                         o.completed += file.completedLength;
-                        o.size += file.length;
-                        o.count += file.selected ? 1 : 0;
+                        o.size += size;
+                        o.count += d;
                         o.total++;
                     } else {
                         exts[ext] = {
                             tag: ext,
                             total: 1,
-                            count: file.selected ? 1 : 0,
-                            size: file.length,
+                            count: d,
+                            size: size,
                             completed: file.completedLength,
                         };
                     }
@@ -381,7 +420,13 @@
                     }
                 }
 
-                return { exts: t, groups: g };
+                var remainSize = totalSize - selectedSize;
+                return {
+                    exts: t,
+                    groups: g,
+                    totalSize: totalSize,
+                    remainSize: remainSize,
+                };
             };
 
             var setSelectFiles = function (silent) {
@@ -511,9 +556,8 @@
                 availableOptions: [],
                 options: [],
 
-                extensionInfos: [],
+                fileInfos: {},
                 fileFilter: "Show All",
-                extensionGroupNames: [],
             };
 
             $scope.setFileFilter = function (type) {
@@ -632,103 +676,6 @@
                 return true;
             };
 
-            $scope.selectFiles = function (type) {
-                if (!$scope.task || !$scope.task.files) {
-                    return;
-                }
-
-                if (type === "auto") {
-                    if ($scope.isAllFileSelected()) {
-                        type = "none";
-                    } else {
-                        type = "all";
-                    }
-                }
-
-                for (var i = 0; i < $scope.task.files.length; i++) {
-                    var file = $scope.task.files[i];
-
-                    if (file.isDir) {
-                        continue;
-                    }
-
-                    if (type === "all") {
-                        file.selected = true;
-                    } else if (type === "none") {
-                        file.selected = false;
-                    } else if (type === "reverse") {
-                        file.selected = !file.selected;
-                    }
-                }
-
-                updateAllDirNodesSelectedStatus();
-            };
-
-            $scope.chooseSpecifiedFiles = function (type) {
-                if (
-                    !$scope.task ||
-                    !$scope.task.files ||
-                    !ariaNgFileTypes[type]
-                ) {
-                    return;
-                }
-
-                var files = $scope.task.files;
-                var extensions = ariaNgFileTypes[type].extensions;
-                var fileIndexes = [];
-                var isAllSelected = true;
-
-                for (var i = 0; i < files.length; i++) {
-                    var file = files[i];
-
-                    if (file.isDir) {
-                        continue;
-                    }
-
-                    var extension = ariaNgCommonService.getFileExtension(
-                        file.fileName
-                    );
-
-                    if (extension) {
-                        extension = extension.toLowerCase();
-                    }
-
-                    if (extensions.indexOf(extension) >= 0) {
-                        fileIndexes.push(i);
-
-                        if (!file.selected) {
-                            isAllSelected = false;
-                        }
-                    }
-                }
-
-                for (var i = 0; i < fileIndexes.length; i++) {
-                    var index = fileIndexes[i];
-                    var file = files[index];
-
-                    if (file && !file.isDir) {
-                        file.selected = !isAllSelected;
-                    }
-                }
-
-                updateAllDirNodesSelectedStatus();
-            };
-
-            $scope.saveChoosedFiles = function () {
-                if ($scope.context.showChooseFilesToolbar) {
-                    $rootScope.loadPromise = setSelectFiles(false);
-                    $scope.context.showChooseFilesToolbar = false;
-                }
-            };
-
-            $scope.cancelChooseFiles = function () {
-                if ($scope.context.showChooseFilesToolbar) {
-                    pauseDownloadTaskRefresh = false;
-                    refreshDownloadTask(true);
-                    $scope.context.showChooseFilesToolbar = false;
-                }
-            };
-
             $scope.showCustomChooseFileModal = function () {
                 if (!$scope.task || !$scope.task.files) {
                     return;
@@ -756,13 +703,6 @@
 
                     if (!extensionInfo) {
                         var extensionName = extension;
-
-                        if (
-                            extensionName.length > 0 &&
-                            extensionName.charAt(0) === "."
-                        ) {
-                            extensionName = extensionName.substring(1);
-                        }
 
                         extensionInfo = {
                             extension: extensionName,
@@ -837,44 +777,17 @@
                 angular.element("#custom-choose-file-modal").modal();
             };
 
-            $scope.setSelectedExtension = function (
-                selectedExtension,
-                selected
-            ) {
-                if (!$scope.task || !$scope.task.files) {
-                    return;
-                }
-
-                var files = $scope.task.files;
-
-                for (var i = 0; i < files.length; i++) {
-                    var file = files[i];
-
-                    if (file.isDir) {
-                        continue;
-                    }
-
-                    var extension = ariaNgCommonService.getFileExtension(
-                        file.fileName
-                    );
-
-                    if (extension) {
-                        extension = extension.toLowerCase();
-                    }
-
-                    if (extension !== "." + selectedExtension) {
-                        continue;
-                    }
-
-                    file.selected = selected;
-                }
-
-                updateAllDirNodesSelectedStatus();
-            };
-
             $("#custom-choose-file-modal").on("hide.bs.modal", function (e) {
                 $scope.context.fileExtensions = null;
             });
+
+            $scope.selectInvert = function () {
+                $rootScope.loadPromise = selectInvert();
+            };
+
+            $scope.selectAllFiles = function () {
+                $rootScope.loadPromise = selectAllFiles();
+            };
 
             $scope.selectExtensionGroup = function (name) {
                 $rootScope.loadPromise = selectExtensionGroup(name);
