@@ -214,17 +214,5 @@
                 ".zip",
             ],
         },
-        misc: {
-            name: "Misc",
-            extensions: [
-                ".html",
-                ".htm",
-                ".nfo",
-                ".xltd",
-                ".lnk",
-                ".url",
-                ".xml",
-            ],
-        },
     });
 })();

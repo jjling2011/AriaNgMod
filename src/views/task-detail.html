@@ -383,6 +383,7 @@
                                 type="button"
                                 class="btn btn-primary btn-xs"
                                 ng-bind="context.fileFilter | translate"
+                                style="cursor: not-allowed;"
                             >
                                 Show All
                             </button>
@@ -462,32 +463,33 @@
                                     </a>
                                 </li>
                                 <li style="margin: 0rem 1rem; height: 0px; border: 1px dashed lightgray;">&nbsp;</li>
-                                <li ng-repeat="g in context.fileInfos.groups | orderBy:'size':true">
+                                <li ng-repeat="cat in context.fileInfos.cats | orderBy:'size':true">
                                     <a
                                         href="javascript:void(0);"
-                                        ng-click="selectExtensionGroup(g.name)"
+                                        ng-click="selectExtensionGroup(cat.tag, true, true)"
                                     >
-                                        {{ g.name | translate }} ({{ g.size | readableVolume }})
+                                        {{ cat.tag | translate }} ({{ cat.size | readableVolume }})
                                     </a>
                                 </li>
                             </ul>
                         </div>
                         <div
                             class="checkbox checkbox-primary checkbox-inline margin-lr"
-                            ng-repeat="info in context.fileInfos.exts | orderBy:'size':true"
+                            ng-repeat="cat in context.fileInfos.cats | orderBy:'size':true"
                         >
                             <input
-                                id="{{'ext_box_' + info.tag}}"
+                                id="ext-group-check-box-{{ cat.tag}}"
                                 type="checkbox"
-                                ng-model="info.checked"
-                                ng-change="selectByExtension(info.tag, info.checked)"
+                                ng-model="cat.checked"
+                                ng-indeterminate="cat.selected > 0 && cat.selected < cat.count"
+                                ng-change="selectExtensionGroup(cat.tag, cat.checked, false)"
                             >
                             <label
-                                for="{{'ext_box_' + info.tag}}"
+                                for="ext-group-check-box-{{ cat.tag}}"
                                 class="allow-word-break"
-                                title="{{ 'Count' | translate }}: {{ info.total }} {{ 'Completed' | translate }}: {{ info.completed | readableVolume }}"
+                                title="{{ 'Count' | translate }}: {{ cat.selected }} / {{ cat.count }} {{ 'Completed' | translate }}: {{ cat.completedSize | readableVolume }}"
                             >
-                                {{ info.tag | translate }} ({{ info.size | readableVolume }})
+                                {{ cat.tag | translate }} ({{ cat.size | readableVolume }})
                             </label>
                         </div>
                     </div>
@@ -979,28 +981,29 @@
                     <div class="settings-table striped hoverable">
                         <div
                             class="row"
-                            ng-repeat="(extensionTypeName, extensionTypeInfo) in context.fileExtensions"
+                            ng-repeat="cat in context.fileInfos.cats | orderBy:'size':true"
                         >
-                            <div
-                                class="setting-key setting-key-without-desc col-sm-4"
-                                ng-bind="extensionTypeInfo.name | translate"
-                            ></div>
+                            <div class="setting-key setting-key-without-desc col-sm-4">
+                                {{ cat.tag | translate }} ({{ cat.size | readableVolume }})
+                            </div>
                             <div class="setting-value col-sm-8">
                                 <div
                                     class="checkbox checkbox-primary checkbox-inline"
-                                    ng-repeat="info in extensionTypeInfo.extensions"
+                                    ng-repeat="ext in cat.exts | orderBy:'size':true"
                                 >
                                     <input
-                                        id="{{info.extension}}"
+                                        id="custom-ext-check-box-{{ ext.tag }}"
                                         type="checkbox"
-                                        ng-model="info.selected"
-                                        ng-indeterminate="info.selectedCount > 0 && info.unSelectedCount > 0"
-                                        ng-change="selectByExtension(info.extension, info.selected)"
+                                        ng-model="ext.checked"
+                                        ng-indeterminate="ext.selected > 0 && ext.selected < ext.count"
+                                        ng-change="selectByExtension(ext.tag, ext.checked)"
                                     >
                                     <label
-                                        for="{{info.extension}}"
-                                        ng-bind="info.extension"
-                                    ></label>
+                                        for="custom-ext-check-box-{{ ext.tag }}"
+                                        title="{{ 'Count' | translate }}: {{ ext.selected }} / {{ ext.count }} {{ 'Completed' | translate }}: {{ ext.completedSize | readableVolume }}"
+                                    >
+                                        {{ ext.tag | translate }} ({{ ext.size | readableVolume }})
+                                    </label>
                                 </div>
                             </div>
                         </div>
