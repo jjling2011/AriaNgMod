@@ -4,16 +4,15 @@
 
 AriaNgMod 是 [mayswind/AriaNg](https://github.com/mayswind/AriaNg) v1.3.8 的修改版。
 
-添加功能：
-
+修改内容：
 -   批量导入 BT 种子
 -   简化按扩展名选择文件
 
-#### 在线使用
+#### 在线使用（和代码同步更新）
 
 [https://jjling2011.github.io/AriaNgMod/](https://jjling2011.github.io/AriaNgMod/)
 
-#### 下载发布文件
+#### 下载发布文件（不定期更新）
 
 [https://github.com/jjling2011/AriaNgMod/releases](https://github.com/jjling2011/AriaNgMod/releases)
 
