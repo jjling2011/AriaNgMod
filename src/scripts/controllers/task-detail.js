@@ -351,7 +351,25 @@
                 return refreshFileList(selectedFileIndex);
             };
 
-            var addToFileInfosDB = function (db, file, cat, ext, size, ds) {
+            var addToFileInfosDB = function (db, sizes, file) {
+                var name = (file.fileName || "").toLowerCase();
+                var ext = ariaNgCommonService.getFileExtension(name);
+
+                var cat = "Other";
+                if (ext in extensionLookupTable) {
+                    cat = extensionLookupTable[ext];
+                }
+
+                var size = file.length;
+                sizes.total += size;
+
+                var ds = 0;
+                if (file.selected) {
+                    ds = 1;
+                    sizes.selected += size;
+                    sizes.completed += file.completedLength;
+                }
+
                 if (!(cat in db)) {
                     db[cat] = {
                         tag: cat,
@@ -387,7 +405,7 @@
                 e.size += size;
             };
 
-            var translateFileInfosDB = function (db, totalSize, selectedSize) {
+            var translateFileInfosDB = function (db, sizes) {
                 var cats = [];
 
                 for (var key in db) {
@@ -409,11 +427,13 @@
                     cats.push(c);
                 }
 
-                var remainSize = totalSize - selectedSize;
+                sizes["remain"] = sizes.total - sizes.selected;
+                sizes["completedPercent"] =
+                    (sizes.completed / sizes.selected) * 100;
+
                 return {
                     cats: cats,
-                    totalSize: totalSize,
-                    remainSize: remainSize,
+                    sizes: sizes,
                 };
             };
 
@@ -423,8 +443,11 @@
                     return fileInfos;
                 }
 
-                var totalSize = 0;
-                var selectedSize = 0;
+                var sizes = {
+                    total: 0,
+                    selected: 0,
+                    completed: 0,
+                };
                 var files = task.files;
                 for (var i = 0; i < files.length; i++) {
                     var file = files[i];
@@ -433,31 +456,10 @@
                         continue;
                     }
 
-                    var name = (file.fileName || "").toLowerCase();
-                    var ext = ariaNgCommonService.getFileExtension(name);
-
-                    var cat = "Other";
-                    if (ext in extensionLookupTable) {
-                        cat = extensionLookupTable[ext];
-                    }
-
-                    var size = file.length;
-                    totalSize += size;
-
-                    var ds = 0;
-                    if (file.selected) {
-                        ds = 1;
-                        selectedSize += size;
-                    }
-
-                    addToFileInfosDB(fileInfos, file, cat, ext, size, ds);
+                    addToFileInfosDB(fileInfos, sizes, file);
                 }
 
-                var info = translateFileInfosDB(
-                    fileInfos,
-                    totalSize,
-                    selectedSize
-                );
+                var info = translateFileInfosDB(fileInfos, sizes);
                 // console.log("fileInfos:", info);
                 return info;
             };
@@ -713,6 +715,58 @@
                     return;
                 }
                 angular.element("#custom-choose-file-modal").modal();
+            };
+
+            $scope.isFileVisible = function (file) {
+                var fileFilter = $scope.context.fileFilter;
+
+                if (fileFilter === "Show All") {
+                    return !$scope.context.collapsedDirs[file.relativePath];
+                }
+
+                if (file.isDir) {
+                    return false;
+                }
+
+                if (fileFilter === "Show Selected") {
+                    return file.selected;
+                }
+
+                if (fileFilter === "Show Uncompleted") {
+                    return file.selected && file.completedLength < file.length;
+                }
+
+                var name = (file.fileName || "").toLowerCase();
+                var ext = ariaNgCommonService.getFileExtension(name);
+                if (ext in extensionLookupTable) {
+                    return extensionLookupTable[ext] === fileFilter;
+                }
+
+                for (let cat of $scope.context.fileInfos.cats) {
+                    if (cat.etags.indexOf(ext) >= 0) {
+                        return cat.tag === fileFilter;
+                    }
+                }
+                return false;
+            };
+
+            $scope.isExtensionFilterDisabled = function () {
+                if (
+                    !$scope.task ||
+                    !$scope.task.files ||
+                    $scope.task.files.length <= 1
+                ) {
+                    return true;
+                }
+
+                if (
+                    $scope.task.status === "waiting" ||
+                    $scope.task.status === "paused"
+                ) {
+                    return false;
+                }
+
+                return true;
             };
 
             $scope.selectInvert = function () {
