@@ -718,8 +718,15 @@
             };
 
             $scope.isFileVisible = function (file) {
-                var fileFilter = $scope.context.fileFilter;
+                var name = (file.fileName || "").toLowerCase();
+                var keyword = (
+                    $rootScope.searchContext.text || ""
+                ).toLowerCase();
+                if (keyword !== "" && name.indexOf(keyword) < 0) {
+                    return false;
+                }
 
+                var fileFilter = $scope.context.fileFilter;
                 if (fileFilter === "Show All") {
                     return !$scope.context.collapsedDirs[file.relativePath];
                 }
@@ -736,7 +743,6 @@
                     return file.selected && file.completedLength < file.length;
                 }
 
-                var name = (file.fileName || "").toLowerCase();
                 var ext = ariaNgCommonService.getFileExtension(name);
                 if (ext in extensionLookupTable) {
                     return extensionLookupTable[ext] === fileFilter;
