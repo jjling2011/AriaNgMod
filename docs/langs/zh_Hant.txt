@@ -29,6 +29,7 @@ Delete=刪除工作
 Selected=選中
 Size=大小
 Total=合计
+Filtered=过滤后
 Select All=全部選中
 Select None=全部不選
 Select Invert=反向選擇
