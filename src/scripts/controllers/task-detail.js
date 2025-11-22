@@ -573,7 +573,7 @@
             };
 
             $scope.context = {
-                currentTab: "overview",
+                currentTab: "filelist",
                 isEnableSpeedChart:
                     ariaNgSettingService.getDownloadTaskRefreshInterval() > 0,
                 showPiecesInfo:
