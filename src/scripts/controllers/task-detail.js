@@ -289,6 +289,30 @@
                 return refreshFileList(selectedFileIndex);
             };
 
+            var selectGreedyTop = function (percent) {
+                if (!$scope.task || !$scope.task.files) {
+                    return;
+                }
+
+                // console.log($scope.task.files[1])
+                var cand = $scope.task.files.filter(f => !f.isDir);
+                cand.sort((a, b) => b.length - a.length);
+                var total = cand.reduce((s, f) => s + f.length, 0);
+                var max = total / 100 * percent;
+                if (!cand || !cand.length || !max) {
+                    return;
+                }
+
+                var selectedFileIndex = [];
+                for (var i = 0; i < cand.length && max > 0; i++) {
+                    var file = cand[i];
+                    selectedFileIndex.push(file.index);
+                    max = max - file.length;
+                    // console.log("percent:", Math.floor(total / max * 100), "% max:", max, "len:", file.length)
+                }
+                return refreshFileList(selectedFileIndex);
+            }
+
             var selectExtensionGroup = function (tag, checked, excluded) {
                 if (!$scope.task || !$scope.task.files) {
                     return;
@@ -781,6 +805,10 @@
 
             $scope.selectAllFiles = function () {
                 $rootScope.loadPromise = selectAllFiles();
+            };
+
+            $scope.selectGreedyTop = function (percent) {
+                $rootScope.loadPromise = selectGreedyTop(percent);
             };
 
             $scope.selectExtensionGroup = function (name, checked, excluded) {

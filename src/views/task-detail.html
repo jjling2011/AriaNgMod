@@ -475,6 +475,31 @@
                                     </a>
                                 </li>
                                 <li style="margin: 0rem 1rem; height: 0px; border: 1px dashed lightgray;">&nbsp;</li>
+                                <li>
+                                    <a
+                                        href="javascript:void(0);"
+                                        ng-click="selectGreedyTop(90)"
+                                    >
+                                        {{ 'Select Greedy' | translate }} 90%
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="javascript:void(0);"
+                                        ng-click="selectGreedyTop(75)"
+                                    >
+                                        {{ 'Select Greedy' | translate }} 75%
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="javascript:void(0);"
+                                        ng-click="selectGreedyTop(60)"
+                                    >
+                                        {{ 'Select Greedy' | translate }} 60%
+                                    </a>
+                                </li>
+                                <li style="margin: 0rem 1rem; height: 0px; border: 1px dashed lightgray;">&nbsp;</li>
                                 <li ng-repeat="cat in context.fileInfos.cats | orderBy:'size':true">
                                     <a
                                         href="javascript:void(0);"

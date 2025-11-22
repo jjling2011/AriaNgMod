@@ -29,6 +29,7 @@ Delete=Delete
 Select All=Select All
 Select None=Select None
 Select Invert=Select Invert
+Select Greedy=Select Greedy
 Select All Failed Tasks=Select All Failed Tasks
 Select All Completed Tasks=Select All Completed Tasks
 Select All Tasks=Select All Tasks
