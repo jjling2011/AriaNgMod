@@ -420,6 +420,10 @@
             return orderType.equals(targetType);
         };
 
+        $scope.clearSearchContext = function () {
+            $rootScope.searchContext.text = "";
+        }
+
         $scope.showQuickSettingDialog = function (type, title) {
             $scope.quickSettingContext = {
                 type: type,

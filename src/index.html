@@ -342,6 +342,15 @@
                         </ul>
                     </div>
                     <div class="navbar-searchbar hidden-xs">
+                        <!-- this trash button is a dirty patch, so it uses style property -->
+                        <div class="form-control-icon"
+                            style="padding: 0.75rem; display: inline-block; float: left;"
+                        >
+                            <a class="fa fa-times"
+                                style="font-size: 1.75rem; color: #707070;"
+                                ng-click="clearSearchContext()"
+                            ></a>
+                        </div>
                         <ul class="nav navbar-nav">
                             <li>
                                 <input
