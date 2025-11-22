@@ -431,12 +431,14 @@
                     return true;
                 }
 
-                return (
-                    task.taskName
-                        .toLowerCase()
-                        .indexOf($rootScope.searchContext.text.toLowerCase()) >=
-                    0
-                );
+                var kw = $rootScope.searchContext.text.toLowerCase();
+                var min = kw[0] == "@" && Number.parseInt(kw.substring(1)) || 0;
+                if(min > 0) {
+                    var ok = task.files && task.files.filter(f => f.selected).length >= min;
+                    // console.log('kw:', min, "files:", task.files.length, "result:", ok);
+                    return ok;
+                }
+                return (task.taskName.toLowerCase().indexOf(kw) >= 0);
             };
 
             $rootScope.isTaskRetryable = function (task) {

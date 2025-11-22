@@ -41,6 +41,7 @@ Copy Download Url=複製下載連結
 Copy Magnet Link=複製磁力連結
 Help=說明
 Search=搜尋
+Clear Search Content=清除搜尋内容
 Default=預設
 Expand=展開
 Collapse=摺疊

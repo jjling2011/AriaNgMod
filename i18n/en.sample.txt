@@ -37,6 +37,7 @@ Copy Download Url=Copy Download Url
 Copy Magnet Link=Copy Magnet Link
 Help=Help
 Search=Search
+Clear Search Content=Clear Search Content
 Default=Default
 Expand=Expand
 Collapse=Collapse
