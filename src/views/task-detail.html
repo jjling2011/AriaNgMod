@@ -340,9 +340,9 @@
                                 >
                                     <span title="({{ 'Selected' | translate }}, {{ 'Completed' | translate }}, {{ 'Total' | translate }})">
                                         {{ 'File Name' | translate }}
-                                        (#{{context.fileInfos.counter.selected}}-{{ context.fileInfos.sizes.selected | readableVolume }},
-                                         #{{context.fileInfos.counter.completed}}-{{ context.fileInfos.sizes.completed | readableVolume }},
-                                         #{{context.fileInfos.counter.total}}-{{ context.fileInfos.sizes.total | readableVolume }})
+                                        ({{context.fileInfos.counter.selected}}-{{ context.fileInfos.sizes.selected | readableVolume }},
+                                         {{context.fileInfos.counter.completed}}-{{ context.fileInfos.sizes.completed | readableVolume }},
+                                         {{context.fileInfos.counter.total}}-{{ context.fileInfos.sizes.total | readableVolume }})
                                     </span>
                                     <i
                                         ng-if="!task.multiDir"
