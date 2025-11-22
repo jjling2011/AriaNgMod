@@ -7,6 +7,8 @@ AriaNgMod 是 [mayswind/AriaNg](https://github.com/mayswind/AriaNg) 的修改版
 修改内容：
  * 批量导入 BT 种子
  * 简化按扩展名选择文件
+ * 搜索时 "@10c" 表示搜索有 10 个文件的任务。 "c" 表示包含已结束任务
+ * 支持按比例选择大文件
 
 #### 在线使用（和代码同步更新）
 

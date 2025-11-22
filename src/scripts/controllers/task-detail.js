@@ -294,7 +294,6 @@
                     return;
                 }
 
-                // console.log($scope.task.files[1])
                 var cand = $scope.task.files.filter(f => !f.isDir);
                 cand.sort((a, b) => b.length - a.length);
                 var total = cand.reduce((s, f) => s + f.length, 0);
@@ -308,7 +307,6 @@
                     var file = cand[i];
                     selectedFileIndex.push(file.index);
                     max = max - file.length;
-                    // console.log("percent:", Math.floor(total / max * 100), "% max:", max, "len:", file.length)
                 }
                 return refreshFileList(selectedFileIndex);
             }
@@ -467,6 +465,12 @@
                     return fileInfos;
                 }
 
+                var counter = {
+                    selected: 0,
+                    completed: 0,
+                    total: 0,
+                };
+
                 var sizes = {
                     total: 0,
                     selected: 0,
@@ -479,12 +483,14 @@
                     if (file.isDir) {
                         continue;
                     }
-
+                    counter.selected += file.selected ? 1 : 0;
+                    counter.completed += file.completePercent >= 100;
+                    counter.total ++;
                     addToFileInfosDB(fileInfos, sizes, file);
                 }
 
                 var info = translateFileInfosDB(fileInfos, sizes);
-                // console.log("fileInfos:", info);
+                info["counter"] = counter;
                 return info;
             };
 

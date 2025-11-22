@@ -338,8 +338,11 @@
                                     ng-click="changeFileListDisplayOrder('name:asc', true)"
                                     ng-class="{true: 'default-cursor'}[task.multiDir]"
                                 >
-                                    <span title="{{ 'Completed' | translate }} / {{ 'Selected' | translate }} / {{ 'Total' | translate }}">
-                                        {{ 'File Name' | translate }} ({{ context.fileInfos.sizes.completed | readableVolume }} / {{ context.fileInfos.sizes.selected | readableVolume }} / {{ context.fileInfos.sizes.total | readableVolume }})
+                                    <span title="({{ 'Selected' | translate }}, {{ 'Completed' | translate }}, {{ 'Total' | translate }})">
+                                        {{ 'File Name' | translate }}
+                                        (#{{context.fileInfos.counter.selected}}-{{ context.fileInfos.sizes.selected | readableVolume }},
+                                         #{{context.fileInfos.counter.completed}}-{{ context.fileInfos.sizes.completed | readableVolume }},
+                                         #{{context.fileInfos.counter.total}}-{{ context.fileInfos.sizes.total | readableVolume }})
                                     </span>
                                     <i
                                         ng-if="!task.multiDir"
@@ -480,7 +483,7 @@
                                         href="javascript:void(0);"
                                         ng-click="selectGreedyTop(90)"
                                     >
-                                        {{ 'Select Greedy' | translate }} 90%
+                                        {{ 'Select Greedily' | translate }} 90%
                                     </a>
                                 </li>
                                 <li>
@@ -488,7 +491,7 @@
                                         href="javascript:void(0);"
                                         ng-click="selectGreedyTop(75)"
                                     >
-                                        {{ 'Select Greedy' | translate }} 75%
+                                        {{ 'Select Greedily' | translate }} 75%
                                     </a>
                                 </li>
                                 <li>
@@ -496,7 +499,7 @@
                                         href="javascript:void(0);"
                                         ng-click="selectGreedyTop(60)"
                                     >
-                                        {{ 'Select Greedy' | translate }} 60%
+                                        {{ 'Select Greedily' | translate }} 60%
                                     </a>
                                 </li>
                                 <li style="margin: 0rem 1rem; height: 0px; border: 1px dashed lightgray;">&nbsp;</li>

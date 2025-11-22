@@ -433,12 +433,16 @@
 
                 var kw = $rootScope.searchContext.text.toLowerCase();
                 var min = kw[0] == "@" && Number.parseInt(kw.substring(1)) || 0;
-                if(min > 0) {
-                    var ok = task.files && task.files.filter(f => f.selected).length >= min;
-                    // console.log('kw:', min, "files:", task.files.length, "result:", ok);
-                    return ok;
+                if(min < 1) {
+                    return (task.taskName.toLowerCase().indexOf(kw) >= 0);
                 }
-                return (task.taskName.toLowerCase().indexOf(kw) >= 0);
+
+                if (!kw.endsWith("c") && task.completePercent >= 100) {
+                    return false;
+                }
+
+                var ok = task.files && task.files.filter(f => f.selected).length >= min;
+                return ok;
             };
 
             $rootScope.isTaskRetryable = function (task) {
@@ -650,6 +654,9 @@
             $rootScope.$on(
                 "$routeChangeStart",
                 function (event, next, current) {
+                    // clear keyword when route changes
+                    $rootScope.searchContext.text = "";
+
                     var location = $location.path();
 
                     setNavbarSelected(location);
