@@ -19,11 +19,11 @@ git merge m
 # 安装依赖
 pnpm install
 
-# 编译
-pnpm run build
+# 本地测试 build and serve
+pnpm run bns
 
-# 本地测试
-pnpm run serve
+# 复制 dist 到 docs 目录，发布 demo
+pnpm run demo
 
 # 生成 all-in-one 发布文件
 pnpm run allinone
