@@ -89,7 +89,9 @@ td {
 .main-header .navbar .navbar-searchbar {
     padding-top: 8px;
     padding-right: 20px;
-    float: right;
+    /* the popup connected message box could block search-bar for several seconds */
+    /* so do not place search-bar at the top-right conner */
+    /* float: right; */
 }
 
 .main-header .logo .logo-mini {
