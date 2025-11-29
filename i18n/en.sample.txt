@@ -88,6 +88,7 @@ RPC Settings=RPC Settings
 Advanced Settings=Advanced Settings
 AriaNg Debug Console=AriaNg Debug Console
 Aria2 Status=Aria2 Status
+File Count=File Count
 File Name=File Name
 File Size=File Size
 Progress=Progress

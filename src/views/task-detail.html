@@ -338,11 +338,11 @@
                                     ng-click="changeFileListDisplayOrder('name:asc', true)"
                                     ng-class="{true: 'default-cursor'}[task.multiDir]"
                                 >
-                                    <span title="({{ 'Selected' | translate }} / {{ 'Total' | translate }})">
+                                    <span title="({{ 'File Count' | translate }}, {{ 'File Size' | translate }}%, {{ 'Selected' | translate }}, {{ 'Total' | translate }})">
                                         {{ 'File Name' | translate }}
-                                        ({{context.fileInfos.counter.selected}}-{{ context.fileInfos.sizes.selected | readableVolume }}
-                                         /
-                                         {{context.fileInfos.counter.total}}-{{ context.fileInfos.sizes.total | readableVolume }})
+                                        ({{ context.fileInfos.counter.selected}}/{{context.fileInfos.counter.total}},
+                                         {{ context.fileInfos.sizes.selected / context.fileInfos.sizes.total * 100 | percent: 0 }}%,
+                                         {{ context.fileInfos.sizes.selected | readableVolume }}, {{ context.fileInfos.sizes.total | readableVolume }})
                                     </span>
                                     <i
                                         ng-if="!task.multiDir"
@@ -356,8 +356,9 @@
                                     ng-click="changeFileListDisplayOrder('percent:desc', true)"
                                     ng-class="{true: 'default-cursor'}[task.multiDir]"
                                 >
-                                    <span title="({{ 'Completed' | translate }} %)">
-                                        {{ 'Progress' | translate }} ({{ context.fileInfos.sizes.completedPercent | percent: 2 }}%)
+                                    <span title="({{ 'Completed' | translate }}%)">
+                                        {{ 'Progress' | translate }}
+                                        ({{ context.fileInfos.sizes.completedPercent | percent: 2 }}%)
                                     </span>
                                     <i
                                         ng-if="!task.multiDir"
@@ -484,14 +485,6 @@
                                         ng-click="selectGreedyTop(90)"
                                     >
                                         {{ 'Select Greedily' | translate }} 90%
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="javascript:void(0);"
-                                        ng-click="selectGreedyTop(75)"
-                                    >
-                                        {{ 'Select Greedily' | translate }} 75%
                                     </a>
                                 </li>
                                 <li>

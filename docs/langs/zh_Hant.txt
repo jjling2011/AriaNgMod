@@ -92,6 +92,7 @@ RPC Settings=RPC 設定
 Advanced Settings=進階設定
 AriaNg Debug Console=AriaNg 偵錯控制台
 Aria2 Status=Aria2 狀態
+File Count=檔案数
 File Name=檔名
 File Size=大小
 Progress=進度

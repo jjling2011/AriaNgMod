@@ -1,6 +1,7 @@
 #Add by jjling 
 package-lock.json
 pnpm-lock.yaml
+sh/
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Yeoman template
