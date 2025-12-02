@@ -19,7 +19,7 @@ AriaNgMod 是 [mayswind/AriaNg](https://github.com/mayswind/AriaNg) 的修改版
 
 [https://jjling2011.github.io/AriaNgMod/](https://jjling2011.github.io/AriaNgMod/)
 
-![demo.png](./readme/demo.png)  
+![demo.png](./docs/demo.png)  
 
 #### 下载发布文件（不定期更新）
 
@@ -42,4 +42,4 @@ pnpm run allinone
 ```
 
 #### 更新记录
-[logs.md](./readme/logs.md)
+[logs.md](./docs/logs.md)

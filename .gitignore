@@ -3,6 +3,8 @@ package-lock.json
 pnpm-lock.yaml
 sh/
 
+dist/
+
 # Created by .ignore support plugin (hsz.mobi)
 ### Yeoman template
 node_modules/
@@ -10,7 +12,6 @@ bower_components/
 *.log
 
 build/
-dist/
 ### Windows template
 # Windows image file caches
 Thumbs.db
