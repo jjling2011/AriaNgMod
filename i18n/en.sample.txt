@@ -30,6 +30,7 @@ Select All=Select All
 Select None=Select None
 Select Invert=Select Invert
 Select Greedily=Select Greedily
+Select Largest One=Select Largest One
 Select All Failed Tasks=Select All Failed Tasks
 Select All Completed Tasks=Select All Completed Tasks
 Select All Tasks=Select All Tasks

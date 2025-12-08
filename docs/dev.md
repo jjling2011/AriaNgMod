@@ -17,14 +17,19 @@ git merge m
 
 ```bash
 # 安装依赖
-pnpm install
+npm install
 
 # 本地测试 build and serve
-pnpm run bns
+npm run bns
 
-# 复制 dist 到 docs 目录，发布 demo
-pnpm run demo
+# 发布 demo
+# 复制 dist 到 pages 目录
+npm run sync
+git commit -am "..."
+# set proxy as need
+# 提交到 GitHub
+npm run pages
 
 # 生成 all-in-one 发布文件
-pnpm run allinone
+npm run allinone
 ```

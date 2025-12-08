@@ -289,6 +289,18 @@
                 return refreshFileList(selectedFileIndex);
             };
 
+            var selectLargestOne = function () {
+                if (!$scope.task || !$scope.task.files) {
+                    return;
+                }
+
+                var cand = $scope.task.files.filter(f => !f.isDir);
+                cand.sort((a, b) => b.length - a.length);
+                var first = cand[0]
+                var idxs = first ? [first.index] : []
+                return refreshFileList(idxs);
+            }
+
             var selectGreedyTop = function (percent) {
                 if (!$scope.task || !$scope.task.files) {
                     return;
@@ -485,7 +497,7 @@
                     }
                     counter.selected += file.selected ? 1 : 0;
                     counter.completed += file.completePercent >= 100;
-                    counter.total ++;
+                    counter.total++;
                     addToFileInfosDB(fileInfos, sizes, file);
                 }
 
@@ -578,11 +590,11 @@
                 node.selected =
                     selectedSubNodesCount > 0 &&
                     selectedSubNodesCount ===
-                        node.subDirs.length + node.files.length;
+                    node.subDirs.length + node.files.length;
                 node.partialSelected =
                     (selectedSubNodesCount > 0 &&
                         selectedSubNodesCount <
-                            node.subDirs.length + node.files.length) ||
+                        node.subDirs.length + node.files.length) ||
                     partitalSelectedSubNodesCount > 0;
             };
 
@@ -748,6 +760,14 @@
             };
 
             $scope.isFileVisible = function (file) {
+                if (file.isDir) {
+                    return true;
+                }
+
+                if ($scope.context.collapsedDirs[file.relativePath]) {
+                    return false;
+                }
+
                 var name = (file.fileName || "").toLowerCase();
                 var keyword = (
                     $rootScope.searchContext.text || ""
@@ -758,11 +778,7 @@
 
                 var fileFilter = $scope.context.fileFilter;
                 if (fileFilter === "Show All") {
-                    return !$scope.context.collapsedDirs[file.relativePath];
-                }
-
-                if (file.isDir) {
-                    return false;
+                    return true;
                 }
 
                 if (fileFilter === "Show Selected") {
@@ -811,6 +827,10 @@
 
             $scope.selectAllFiles = function () {
                 $rootScope.loadPromise = selectAllFiles();
+            };
+
+            $scope.selectLargestOne = function () {
+                $rootScope.loadPromise = selectLargestOne();
             };
 
             $scope.selectGreedyTop = function (percent) {
