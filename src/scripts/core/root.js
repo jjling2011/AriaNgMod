@@ -76,8 +76,8 @@
 
                 ariaNgLogService.info(
                     "[root.setThemeBySystemSettings] system uses " +
-                        (matchPreferColorScheme.matches ? "dark" : "light") +
-                        " theme"
+                    (matchPreferColorScheme.matches ? "dark" : "light") +
+                    " theme"
                 );
 
                 if (matchPreferColorScheme.matches) {
@@ -433,11 +433,15 @@
 
                 var kw = $rootScope.searchContext.text.toLowerCase();
                 var min = kw[0] == "@" && Number.parseInt(kw.substring(1)) || 0;
-                if(min < 1) {
+                if (min < 1) {
                     return (task.taskName.toLowerCase().indexOf(kw) >= 0);
                 }
 
-                if (!kw.endsWith("c") && task.completePercent >= 100) {
+                if (kw.indexOf("c") < 0 && task.completePercent >= 100) {
+                    return false;
+                }
+
+                if (kw.indexOf("a") >= 0 && !task.isAllFileSelected) {
                     return false;
                 }
 
@@ -671,8 +675,8 @@
                 matchPreferColorScheme.addEventListener("change", function (e) {
                     ariaNgLogService.info(
                         "[root] system switches to " +
-                            (e.matches ? "dark" : "light") +
-                            " theme"
+                        (e.matches ? "dark" : "light") +
+                        " theme"
                     );
 
                     if (ariaNgSettingService.getTheme() === "system") {

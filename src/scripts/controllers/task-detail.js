@@ -273,6 +273,22 @@
                 return refreshFileList(selectedFileIndex);
             };
 
+            var selectCompleted = function () {
+                if (!$scope.task || !$scope.task.files) {
+                    return;
+                }
+
+                var selectedFileIndex = [];
+                for (var i = 0; i < $scope.task.files.length; i++) {
+                    var file = $scope.task.files[i];
+                    if (file && !file.isDir && file.completedLength >= file.length) {
+                        selectedFileIndex.push(file.index);
+                    }
+                }
+
+                return refreshFileList(selectedFileIndex);
+            };
+
             var selectAllFiles = function () {
                 if (!$scope.task || !$scope.task.files) {
                     return;
@@ -823,6 +839,10 @@
 
             $scope.selectInvert = function () {
                 $rootScope.loadPromise = selectInvert();
+            };
+
+            $scope.selectCompleted = function () {
+                $rootScope.loadPromise = selectCompleted();
             };
 
             $scope.selectAllFiles = function () {

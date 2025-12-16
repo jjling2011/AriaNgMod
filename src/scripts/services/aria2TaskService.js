@@ -324,6 +324,7 @@
 
             task.errorDescription = getTaskErrorDescription(task);
 
+            task.isAllFileSelected = true;
             if (task.files) {
                 var selectedFileCount = 0;
                 var allDirectories = [];
@@ -335,6 +336,9 @@
                     file.fileName = getFileName(file);
                     file.length = parseInt(file.length);
                     file.selected = (file.selected === true || file.selected === 'true');
+                    if (!file.selected) {
+                        task.isAllFileSelected = false;
+                    }
                     file.completedLength = parseInt(file.completedLength);
                     file.completePercent = (file.length > 0 ? file.completedLength / file.length * 100 : 0);
 
@@ -642,8 +646,8 @@
                 var deferred = $q.defer();
 
                 var methods = [
-                    aria2RpcService.tellStatus({gid: gid}, true),
-                    aria2RpcService.getOption({gid: gid}, true)
+                    aria2RpcService.tellStatus({ gid: gid }, true),
+                    aria2RpcService.getOption({ gid: gid }, true)
                 ];
 
                 var task = null, options = null;

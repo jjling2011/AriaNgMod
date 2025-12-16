@@ -33,6 +33,7 @@ Filtered=过滤后
 Select All=全部选中
 Select None=全部不选
 Select Invert=反向选择
+Select Completed=选中已完成
 Select Greedily=大文件
 Select Largest One=单个最大文件
 Select All Failed Tasks=全选失败的任务
