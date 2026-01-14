@@ -432,21 +432,27 @@
                 }
 
                 var kw = $rootScope.searchContext.text.toLowerCase();
+                var not = (cond) => cond;
+                if(kw.startsWith("!")){
+                    kw = kw.substring(1)
+                    not = (cond) => !(cond);
+                }
+
                 var min = kw[0] == "@" && Number.parseInt(kw.substring(1)) || 0;
                 if (min < 1) {
-                    return (task.taskName.toLowerCase().indexOf(kw) >= 0);
+                    return not(task.taskName.toLowerCase().indexOf(kw) >= 0);
                 }
 
                 if (kw.indexOf("c") < 0 && task.completePercent >= 100) {
-                    return false;
+                    return not(false);
                 }
 
                 if (kw.indexOf("a") >= 0 && !task.isAllFileSelected) {
-                    return false;
+                    return not(false);
                 }
 
                 var ok = task.files && task.files.filter(f => f.selected).length >= min;
-                return ok;
+                return not(ok);
             };
 
             $rootScope.isTaskRetryable = function (task) {
