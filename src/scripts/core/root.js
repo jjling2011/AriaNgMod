@@ -433,21 +433,42 @@
 
                 var kw = $rootScope.searchContext.text.toLowerCase();
                 var not = (cond) => cond;
-                if(kw.startsWith("!")){
+                if (kw.startsWith("!")) {
                     kw = kw.substring(1)
                     not = (cond) => !(cond);
                 }
 
-                var min = kw[0] == "@" && Number.parseInt(kw.substring(1)) || 0;
-                if (min < 1) {
+                // string search keyword
+                if (kw.indexOf("@") !== 0) {
                     return not(task.taskName.toLowerCase().indexOf(kw) >= 0);
                 }
 
-                if (kw.indexOf("c") < 0 && task.completePercent >= 100) {
-                    return not(false);
+                if (task.completePercent >= 100) {
+                    var hasC = kw.indexOf("c") >= 0
+                    // @*c => true (hasC = true)
+                    // !@*c => false (hasC = true)
+                    // @* => false (hasC = false)
+                    // !@* => true (hasC = false)
+                    return not(hasC)
+                }
+
+                // @8
+                kw = kw.substring(1)
+                var min = Number.parseInt(kw) || 0;
+
+                if (kw.indexOf("s") >= 0) {
+                    return not(task.numSeeders >= min)
+                }
+
+                if (kw.indexOf("n") >= 0) {
+                    return not(task.connections >= min)
                 }
 
                 if (kw.indexOf("a") >= 0 && !task.isAllFileSelected) {
+                    // @*a => false
+                    // !@*a => true
+                    // @* => pass
+                    // !@* => pass
                     return not(false);
                 }
 
