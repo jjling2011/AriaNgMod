@@ -70,7 +70,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "build": "gulp clean build",
-    "sync": "rsync -acvh --delete ./dist/ ../angpages/docs",
     "bns": "gulp clean build && http-server -p 3001",
     "allinone": "gulp clean build-bundle",
     "serve": "http-server -p 3001 -o dist"

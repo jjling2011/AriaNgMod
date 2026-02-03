@@ -351,13 +351,23 @@
                                     placeholder="{{'Search' | translate}} e.g. @8c"
                                     title="{{'Search' | translate}} Ctrl+F"
                                     ng-model="searchContext.text"
+                                    list="ariang-search-keywords"
                                 >
+                                <datalist id="ariang-search-keywords">
+                                    <option value="@5a">{{'More Than 5 Files' | translate}}</option>
+                                    <option value="!@1sc">{{'No Seeder' | translate}}</option>
+                                    <option value="@1s">{{'Has Seeders' | translate}}</option>
+                                    <option value="@0">{{'Uncompleted' | translate}}</option>
+                                    <option value="!@0">{{'Completed' | translate}}</option>
+                                    <option value="[METADATA]"></option>
+                                    <option value="![METADATA]"></option>
+                                </datalist>
                             </li>
                             <li>
                                 <!-- this clear-button is a dirty patch, so it uses style property -->
                                 <a class="fa fa-times"
                                     title="{{'Clear Search Content' | translate}}"
-                                    style=" padding: 0.7rem; font-size: 2rem;"
+                                    style="padding: 0.7rem; font-size: 2rem;"
                                     ng-click="clearSearchContext()"
                                 ></a>
                             </li>
