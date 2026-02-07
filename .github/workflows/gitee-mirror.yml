@@ -1,0 +1,24 @@
+name: Sync to Gitee
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Fetch all history for a full mirror
+
+    - name: Mirror to Gitee
+      run: |
+        git remote add gitee "https://gitee.com/${GITEE_USER_NAME}/${REPO_NAME}.git"
+        git push --mirror "https://${GITEE_USER_NAME}:${GITEE_PAT}@gitee.com/${GITEE_USER_NAME}/${REPO_NAME}.git"
+      env:
+        REPO_NAME: AriaNgMod
+        GITEE_PAT: ${{ secrets.GITEE_PAT }}
+        GITEE_USER_NAME: ${{ secrets.GITEE_USER_NAME }}
