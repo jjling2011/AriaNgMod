@@ -1,4 +1,5 @@
 ##### 合并上游更新
+
 ```bash
 # 添加 upstream
 git remote add upstream https://github.com/mayswind/AriaNg.git
@@ -20,6 +21,7 @@ git merge m
 npm install
 
 # 本地测试 build and serve
+# default port 3001
 npm run bns
 
 # 复制 dist 到 pages 项目

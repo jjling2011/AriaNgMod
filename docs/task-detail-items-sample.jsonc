@@ -1,0 +1,44 @@
+[
+    // file
+    {
+        "completedLength": 111912,
+        "index": 16,
+        "length": 12485463,
+        "path": "video1",
+        "selected": true,
+        "uris": [],
+        "fileName": "video1.mp4",
+        "completePercent": 0.9874651637421213,
+        "relativePath": "",
+        "level": 1,
+        "$$hashKey": "object:1440"
+    },
+    // dir
+    {
+        "isDir": true,
+        "nodePath": "V",
+        "nodeName": "V",
+        "relativePath": "",
+        "level": 1,
+        "length": 16545041,
+        "selected": true,
+        "partialSelected": false,
+        "files": [
+            {
+                "completedLength": 428104,
+                "index": 11,
+                "length": 16545041,
+                "path": "/mnt/drv1//mov1/V/video2.mp4",
+                "selected": true,
+                "uris": [],
+                "fileName": "video2.mp4",
+                "completePercent": 12.855107873825736,
+                "relativePath": "V",
+                "level": 2,
+                "$$hashKey": "object:1424"
+            }
+        ],
+        "subDirs": [],
+        "$$hashKey": "object:1423"
+    }
+]

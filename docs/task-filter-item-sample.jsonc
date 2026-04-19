@@ -1,0 +1,53 @@
+{
+    "bittorrent": {
+        "announceList": [
+            [
+                "udp://127.18.13.92:3300/announce"
+            ],
+            [
+                "http://192.10.10.16:3300/announce"
+            ]
+        ],
+        "info": {
+            "name": "The Matrix 3"
+        },
+        "mode": "multi"
+    },
+    "completedLength": 1023524236,
+    "connections": "2",
+    "downloadSpeed": 8493,
+    "files": [
+        {
+            "completedLength": 1021427660,
+            "index": 1,
+            "length": 2053879761,
+            "path": "/mnt/drv2/bt/The Matrix 3/matrix3.mp4",
+            "selected": true,
+            "uris": [],
+            "fileName": "matrix3.mp4",
+            "completePercent": 64.09316198859888
+        }
+    ],
+    "gid": "f55c538853aeb01a",
+    "infoHash": "6f8506f5abf3b9aae3a6abd5b284f743a574a5a9",
+    "numSeeders": "1",
+    "seeder": false,
+    "status": "active",
+    "totalLength": 2153879720,
+    "uploadSpeed": 0,
+    "completePercent": 64.1913447487863,
+    "remainLength": 118365504,
+    "remainPercent": 35.80865525121369,
+    "uploadLength": 0,
+    "shareRatio": 0,
+    "numPieces": null,
+    "completedPieces": 0,
+    "pieceLength": null,
+    "idle": false,
+    "remainTime": 132976.03956199222,
+    "taskName": "The Matrix 3",
+    "hasTaskName": true,
+    "errorDescription": "",
+    "isAllFileSelected": true,
+    "selectedFileCount": 1
+}

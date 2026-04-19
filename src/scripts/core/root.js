@@ -420,6 +420,7 @@
             };
 
             $rootScope.filterTask = function (task) {
+
                 if (!task || !angular.isString(task.taskName)) {
                     return false;
                 }
@@ -455,6 +456,10 @@
                 // @8
                 kw = kw.substring(1)
                 var min = Number.parseInt(kw) || 0;
+
+                if (kw.indexOf("%") >= 0) {
+                    return not(task.completePercent < min);
+                }
 
                 if (kw.indexOf("s") >= 0) {
                     return not(task.numSeeders >= min)
