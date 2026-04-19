@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -49,10 +49,10 @@ jobs:
           echo "构建完成，dist 目录大小：$(du -sh dist | cut -f1)"
 
       - name: Upload static files as artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           # upload entire directory
           path: 'dist/'
 
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
